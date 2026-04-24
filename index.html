@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Obrigado – Full Sales System</title>
+  <title>Playbook Quiz – Full Sales System</title>
+  <meta name="description" content="Descubra o gargalo comercial da sua empresa em 30 segundos. Teste rápido antes de receber seu Playbook Comercial." />
+  <meta property="og:title" content="Playbook Quiz – Full Sales System" />
+  <meta property="og:description" content="Descubra o gargalo comercial da sua empresa em 30 segundos." />
   <link rel="icon" type="image/png" href="I%CC%81CONE---Full-Sales.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -62,26 +65,65 @@
       padding: 48px 24px 80px;
     }
 
+    /* ─── Tarja (passo pill) ───────────────────────────────── */
+    .tarja {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: fit-content;
+      max-width: calc(100% - 32px);
+      margin: 18px auto 0;
+      background: rgba(90, 20, 40, 0.85);
+      border: 1px solid rgba(254, 6, 59, 0.25);
+      border-radius: 999px;
+      color: #ffffff;
+      padding: 10px 20px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: clamp(0.78rem, 1.8vw, 0.88rem);
+      line-height: 1.4;
+      letter-spacing: 0.01em;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+    .tarja strong { font-weight: 700; }
+
     /* ─── Hero text ─────────────────────────────────────────── */
     .hero {
       text-align: center;
       margin-bottom: 40px;
     }
+    .hero__eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(0.72rem, 1.6vw, 0.82rem);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin: 0 0 12px;
+    }
     .hero__title {
       font-family: 'Sora', sans-serif;
-      font-size: clamp(1.55rem, 4vw, 2.1rem);
-      font-weight: 800;
+      font-size: clamp(1.6rem, 3.6vw + 0.4rem, 2.4rem);
+      font-weight: 700;
       color: var(--text);
-      line-height: 1.25;
-      margin-bottom: 14px;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+      margin: 0 0 12px;
     }
-    .hero__title span { color: var(--red); }
+    .hero__title span {
+      color: var(--red);
+      font-weight: 800;
+    }
     .hero__sub {
-      font-size: clamp(0.9rem, 2vw, 1rem);
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(0.95rem, 2vw, 1.1rem);
+      font-weight: 400;
       color: var(--muted);
-      line-height: 1.65;
-      max-width: 580px;
-      margin: 0 auto;
+      line-height: 1.4;
+      margin: 0;
+      max-width: none;
     }
 
     /* ─── Quiz card ─────────────────────────────────────────── */
@@ -391,17 +433,19 @@
     </div>
   </nav>
 
+  <!-- Tarja -->
+  <div class="tarja" role="status">
+    <strong>PASSO 2 DE 4:</strong> Parabéns por ter garantido o Playbook Comercial. Agora responda ao teste rápido abaixo pra liberar o acesso.
+  </div>
+
   <!-- Main content -->
   <main class="page">
 
     <!-- Hero -->
     <header class="hero">
-      <h1 class="hero__title">Obrigado pelo <span>interesse!</span></h1>
-      <p class="hero__sub">
-        Nosso time comercial entrará em contato em breve.<br />
-        Antes de agendar o nosso bate-papo, por favor responda às perguntas abaixo.
-        Isso nos ajuda a entender seu cenário e agiliza o contato do nosso time comercial.
-      </p>
+      <p class="hero__eyebrow">ANTES DE RECEBER O SEU PLAYBOOK...</p>
+      <h1 class="hero__title">Descubra o <span>gargalo comercial da sua empresa</span></h1>
+      <p class="hero__sub">O teste leva apenas 30 segundos</p>
     </header>
 
     <!-- Quiz card -->
@@ -681,6 +725,8 @@
           q4: q4 ? q4.value : null,
           q5: q5 ? q5.value : null
         });
+
+        window.location.href = 'https://playbook-calendly-semi.fullsalessystem.com/';
       }
 
       btnSubmit.addEventListener('click', submitQuiz);
