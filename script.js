@@ -23,6 +23,15 @@
     return 'sid_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
   }
 
+  /* ── URL params (vindos do faq03-playbook) ── */
+  function getQueryParam(name) {
+    try {
+      return new URLSearchParams(window.location.search).get(name) || '';
+    } catch (e) {
+      return '';
+    }
+  }
+
   const progressBar = document.getElementById('progress-bar');
   const stepLabel   = document.getElementById('step-label');
   const stepNum     = document.getElementById('step-num');
@@ -75,6 +84,9 @@
   }
 
   var REDIRECT_URL = 'https://playbook-calendly-semi.fullsalessystem.com/';
+  /* Endpoint do quiz QUALIFICADO (mesmo GHL). Este projeto não tem backend;
+     o /api/quiz de lá tem CORS liberado para playbook-quizz-semi.fullsalessystem.com. */
+  var API_URL = 'https://playbook-quizz.fullsalessystem.com/api/quiz';
 
   /* ── Submit ── */
   function submitQuiz() {
@@ -86,8 +98,9 @@
     var q3 = document.querySelector('input[name="q3"]:checked');
     var q4 = document.querySelector('input[name="q4"]:checked');
     var q5 = document.querySelector('input[name="q5"]:checked');
+    var submissionId = newSubmissionId();
 
-    /* pb_quiz_complete ANTES do redirect (delay de 300ms p/ tag GTM disparar) */
+    /* pb_quiz_complete ANTES do fetch/redirect (delay de 300ms p/ tag GTM disparar) */
     dl('pb_quiz_complete', {
       q1: q1 ? q1.value : '',
       q2: q2.join(','),
@@ -95,16 +108,41 @@
       q4: q4 ? q4.value : '',
       q5: q5 ? q5.value : '',
       resultado: q2.join(','),
-      submission_id: newSubmissionId()
+      submission_id: submissionId
     });
 
-    console.log('[QUIZ SUBMIT - awaiting integration]', {
-      q1: q1 ? q1.value : null,
+    var payload = {
+      submission_id: submissionId,
+      submitted_at: new Date().toISOString(),
+      page: window.location.href,
+      email: getQueryParam('email'),
+      whatsapp: getQueryParam('whatsapp'),
+      nome: getQueryParam('name'),
+      classification: getQueryParam('classification'),
+      q1: q1 ? q1.value : '',
       q2: q2,
-      q3: q3 ? q3.value : null,
-      q4: q4 ? q4.value : null,
-      q5: q5 ? q5.value : null
-    });
+      q3: q3 ? q3.value : '',
+      q4: q4 ? q4.value : '',
+      q5: q5 ? q5.value : ''
+    };
+
+    /* Fire-and-forget cross-origin com keepalive (sobrevive ao redirect).
+       Content-Type text/plain = "simple request" (sem preflight OPTIONS);
+       o serverless do qualificado faz JSON.parse do body string. */
+    try {
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+        body: JSON.stringify(payload),
+        keepalive: true
+      }).then(function (res) {
+        if (!res.ok) console.warn('[quiz] api returned', res.status);
+      }).catch(function (err) {
+        console.warn('[quiz] api error', err);
+      });
+    } catch (e) {
+      console.warn('[quiz] fetch unavailable', e);
+    }
 
     setTimeout(function () {
       window.location.href = REDIRECT_URL;
