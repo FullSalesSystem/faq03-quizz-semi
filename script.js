@@ -84,6 +84,26 @@
   }
 
   var REDIRECT_URL = 'https://playbook-calendly-semi.fullsalessystem.com/';
+
+  /* Repassa o lead pro calendario GHL (form_embed.js leva a query pro iframe).
+     Sem isso o e-mail oculto do form ia vazio e o lead redigitava o telefone:
+     telefone diferente = contato novo sem e-mail no GHL. */
+  var PB_UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'utm_id', 'fbclid', 'gclid'];
+  function calendarUrl() {
+    var url;
+    try { url = new URL(REDIRECT_URL); } catch (e) { return REDIRECT_URL; }
+    var set = function (k, v) { if (v) url.searchParams.set(k, v); };
+    var nome = getQueryParam('name').trim().replace(/\s+/g, ' ');
+    /* whatsapp vem do playbook so com digitos: BR sem DDI (10/11), internacional com DDI */
+    var digits = getQueryParam('whatsapp').replace(/\D+/g, '');
+    set('email', getQueryParam('email'));
+    set('phone', digits ? '+' + (digits.length === 10 || digits.length === 11 ? '55' : '') + digits : '');
+    set('full_name', nome);
+    set('first_name', nome.split(' ')[0]);
+    set('last_name', nome.split(' ').slice(1).join(' '));
+    PB_UTM_KEYS.forEach(function (k) { set(k, getQueryParam(k)); });
+    return url.toString();
+  }
   /* Endpoint do quiz QUALIFICADO (mesmo GHL). Este projeto não tem backend;
      o /api/quiz de lá tem CORS liberado para playbook-quizz-semi.fullsalessystem.com. */
   var API_URL = 'https://playbook-quizz.fullsalessystem.com/api/quiz';
@@ -145,7 +165,7 @@
     }
 
     setTimeout(function () {
-      window.location.href = REDIRECT_URL;
+      window.location.href = calendarUrl();
     }, 300);
   }
 
